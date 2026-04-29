@@ -1,38 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>AIフェイク検知</title>
-</head>
-<body>
-    <h1>AIフェイク検知ツール</h1>
+<script>
+async function analyze() {
+    try {
+        const text = document.getElementById("text").value;
+        const fileInput = document.getElementById("file");
+        const file = fileInput.files[0];
 
-    <textarea id="text" placeholder="文章を入力"></textarea><br><br>
-    <input type="file" id="file"><br><br>
-
-    <button onclick="analyze()">判定する</button>
-
-    <h2 id="result"></h2>
-
-    <script>
-        async function analyze() {
-            const text = document.getElementById("text").value;
-            const fileInput = document.getElementById("file");
-            const file = fileInput.files[0];
-
-            let formData = new FormData();
-            formData.append("text", text);
-            if (file) {
-                formData.append("file", file);
-            }
-
-            const res = await fetch("http://127.0.0.1:8001/analyze", {
-                method: "POST",
-                body: formData
-            });
-
-            const data = await res.json();
-            document.getElementById("result").innerText = data.result;
+        let formData = new FormData();
+        formData.append("text", text || "");
+        if (file) {
+            formData.append("file", file);
         }
-    </script>
-</body>
-</html>
+
+        const res = await fetch("/analyze", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        document.getElementById("result").innerText = data.result || "エラー";
+    } catch (e) {
+        document.getElementById("result").innerText = "通信エラー";
+        console.error(e);
+    }
+}
+</script>
