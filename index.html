@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AIフェイク検知</title>
+</head>
+<body>
+    <h1>AIフェイク検知ツール</h1>
 <script>
 async function analyze() {
     try {
@@ -5,58 +12,49 @@ async function analyze() {
         const fileInput = document.getElementById("file");
         const file = fileInput.files[0];
 
+    <textarea id="text" placeholder="文章を入力"></textarea><br><br>
+    <input type="file" id="file"><br><br>
+
+    <button onclick="analyze()">判定する</button>
+
+    <h2 id="result"></h2>
+
+    <script>
+        async function analyze() {
+            const text = document.getElementById("text").value;
+            const fileInput = document.getElementById("file");
+            const file = fileInput.files[0];
         let formData = new FormData();
         formData.append("text", text || "");
         if (file) {
             formData.append("file", file);
         }
 
+            let formData = new FormData();
+            formData.append("text", text);
+            if (file) {
+                formData.append("file", file);
+            }
         const res = await fetch("/analyze", {
             method: "POST",
             body: formData
         });
 
+            const res = await fetch("http://127.0.0.1:8001/analyze", {
+                method: "POST",
+                body: formData
+            });
         const data = await res.json();
 
+            const data = await res.json();
+            document.getElementById("result").innerText = data.result;
+        }
+    </script>
+</body>
+</html>
         document.getElementById("result").innerText = data.result || "エラー";
     } catch (e) {
         document.getElementById("result").innerText = "通信エラー";
-        console.error(e);
-    }
-}
-</script>
-<script>
-async function analyze() {
-    const resultEl = document.getElementById("result");
-    resultEl.innerText = "判定中...";
-
-    try {
-        const text = document.getElementById("text").value;
-        const fileInput = document.getElementById("file");
-        const file = fileInput.files[0];
-
-        const formData = new FormData();
-        formData.append("text", text);
-
-        if (file) {
-            formData.append("file", file);
-        }
-
-        const res = await fetch("/analyze", {
-            method: "POST",
-            body: formData
-        });
-
-        if (!res.ok) {
-            resultEl.innerText = "サーバーエラー";
-            return;
-        }
-
-        const data = await res.json();
-        resultEl.innerText = data.result;
-
-    } catch (e) {
-        resultEl.innerText = "通信失敗";
         console.error(e);
     }
 }
