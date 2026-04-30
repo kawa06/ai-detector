@@ -1,11 +1,16 @@
-app = FastAPI()
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from openai import OpenAI
 import uvicorn
 import os
+import re
+
+# ← ここで初めて使う
+app = FastAPI()
+
+# APIキー
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # ←これが無いとエラーになる
 app = FastAPI()
