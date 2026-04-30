@@ -35,3 +35,7 @@ async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 # 起動
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=10000)
+    import os
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
