@@ -1,3 +1,6 @@
+app = FastAPI()
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
@@ -6,6 +9,8 @@ import os
 
 # ←これが無いとエラーになる
 app = FastAPI()
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # CORS
 app.add_middleware(
@@ -17,21 +22,42 @@ app.add_middleware(
 )
 
 # トップページ
+
 @app.get("/", response_class=HTMLResponse)
 def home():
     with open("index.html", "r", encoding="utf-8") as f:
         return f.read()
 
 # 判定API（とりあえず簡易）
+
 @app.post("/analyze")
 async def analyze(text: str = Form(""), file: UploadFile = File(None)):
-    if text:
-        result = "AIっぽい"
+
+    # 入力チェック
+    if not text:
+        return {"result": "入力してください"}
+
+    # 自作判定
+    score, reasons = analyze_text(text)
+
+    # ■ 判定分岐
+    if score >= 3:
+        result = "AIの可能性が高い"
+
+    elif score <= 1:
+        result = "人間の可能性が高い"
+
     else:
-        result = "人間っぽい"
+        # ←ここが③（AI使う場所）
+        ai_result = ai_judge(text)
+        return {"result": ai_result}
+
+    # 理由追加
+    if reasons:
+        result += "\n理由：" + "、".join(reasons)
 
     return {"result": result}
-
+    
 # 起動
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=10000)
