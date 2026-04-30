@@ -44,3 +44,8 @@ async def analyze(text: str = Form(""), file: UploadFile = File(None)):
         result = "人間の可能性が高い"
 
     return {"result": result}
+    if (data.result.includes("AI")) {
+    result.style.color = "red";
+} else {
+    result.style.color = "green";
+}
