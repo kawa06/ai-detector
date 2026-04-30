@@ -84,8 +84,9 @@ button:hover {
 <script>
 async function analyze() {
     const text = document.getElementById("text").value;
+    const result = document.getElementById("result");
 
-　result.innerText = "判定中...";
+    result.innerText = "判定中...";
 
     const formData = new FormData();
     formData.append("text", text);
@@ -96,15 +97,7 @@ async function analyze() {
     });
 
     const data = await res.json();
-    const result = document.getElementById("result");
-
     result.innerText = data.result;
-
-    if (data.result.includes("AI")) {
-        result.style.color = "red";
-    } else {
-        result.style.color = "green";
-    }
 }
 </script>
 
