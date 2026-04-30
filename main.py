@@ -45,10 +45,19 @@ async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 
     if score >= 3:
         result = "AIの可能性が高い"
-    elif score <= 1:
+        
+if score >= 3:
+    result = "AIの可能性が高い"
+elif score <= 1:
+    result = "人間の可能性が高い"
+else:
+    # 条件を厳しくする
+    if len(text) < 200:
         result = "人間の可能性が高い"
     else:
-        # ←ここでAI使う
+        ai_result = ai_judge(text)
+        return {"result": ai_result}
+        
         ai_result = ai_judge(text)
         return {"result": ai_result}
 
