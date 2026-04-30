@@ -65,9 +65,3 @@ async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 # 起動
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001)
-from fastapi.responses import HTMLResponse
-
-@app.get("/", response_class=HTMLResponse)
-def home():
-    with open("index.html", "r", encoding="utf-8") as f:
-        return f.read()
