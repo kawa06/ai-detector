@@ -33,6 +33,28 @@ def home():
 @app.post("/analyze")
 async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 
+    if not text:
+        return {"result": "入力してください"}
+
+    score, reasons = analyze_text(text)
+
+    if score >= 3:
+        result = "AIの可能性が高い"
+    elif score <= 1:
+        result = "人間の可能性が高い"
+    else:
+        # ←ここでAI使う
+        ai_result = ai_judge(text)
+        return {"result": ai_result}
+
+    if reasons:
+        result += "\n理由：" + "、".join(reasons)
+
+    return {"result": result}
+    
+@app.post("/analyze")
+async def analyze(text: str = Form(""), file: UploadFile = File(None)):
+
     # 入力チェック
     if not text:
         return {"result": "入力してください"}
