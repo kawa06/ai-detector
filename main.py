@@ -36,16 +36,4 @@ async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 
     total = text_score + image_score
 
-    if total >= 2:
-        result = "AIの可能性が高い"
-    elif total == 1:
-        result = "やや怪しい"
-    else:
-        result = "人間の可能性が高い"
 
-    return {"result": result}
-    if (data.result.includes("AI")) {
-    result.style.color = "red";
-} else {
-    result.style.color = "green";
-}
