@@ -39,3 +39,14 @@ if __name__ == "__main__":
 from openai import OpenAI
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+from fastapi.responses import HTMLResponse
+
+@app.get("/privacy.html", response_class=HTMLResponse)
+def privacy():
+    with open("privacy.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+@app.get("/terms.html", response_class=HTMLResponse)
+def terms():
+    with open("terms.html", "r", encoding="utf-8") as f:
+        return f.read()
