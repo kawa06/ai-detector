@@ -114,6 +114,25 @@ async function analyze() {
 
 <div id="imgResult"></div>
 
+<div id="result"></div>
+
+<script>
+async function check() {
+
+    const text = document.getElementById("text").value;
+
+    const res = await fetch("/predict", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({text})
+    });
+
+    const data = await res.json();
+
+    document.getElementById("result").innerText =
+        "スコア: " + data.score + "% / " + data.result;
+}
+</script>
 <script>
 async function uploadImage() {
     const fileInput = document.getElementById("file");
