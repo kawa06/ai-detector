@@ -83,7 +83,12 @@ def terms():
 # =========================
 @app.post("/analyze")
 async def analyze(text: str = Form(""), file: UploadFile = File(None)):
-score = fake_image_score(file.filename)
+   if file:
+      score = fake_image_score(file.filename)
+      return {
+          "type": "image",
+          "score": score
+      }
     if not text:
         return {"result": "入力してください"}
 
