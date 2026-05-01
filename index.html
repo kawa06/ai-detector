@@ -131,6 +131,8 @@ async function check() {
 
     document.getElementById("result").innerText =
         "スコア: " + data.score + "% / " + data.result;
+    document.getElementById("result").innerText =
+  "スコア: " + (data.score ?? 0) + "% / " + (data.result ?? "エラー");
 }
 </script>
 <script>
