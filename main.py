@@ -106,14 +106,13 @@ async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 
     return {"result": result}
 
-from image_api import router as image_router
-
-app.include_router(image_router)
 
 
 # ローカル起動用
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=10000)
 
+from image_api import router as image_router
 
+app.include_router(image_router)
   
