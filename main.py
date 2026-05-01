@@ -9,7 +9,7 @@ import re
 
 app = FastAPI()
 
-# CORS設定（フロントと通信するため）
+# CORS設定
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,11 +18,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# APIキー
+# OpenAI（使うなら）
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # =========================
-# 自作判定
+# テキスト簡易判定
 # =========================
 def analyze_text(text):
     score = 0
@@ -34,11 +34,11 @@ def analyze_text(text):
 
     if text.count("。") > 3:
         score += 1
-        reasons.append("文の数が多い")
+        reasons.append("文が多い")
 
     if re.search(r'(..)\1{2,}', text):
         score += 1
-        reasons.append("同じ表現の繰り返し")
+        reasons.append("繰り返し表現")
 
     if text.count("です") > 3:
         score += 1
@@ -47,13 +47,16 @@ def analyze_text(text):
     return score, reasons
 
 # =========================
-# AI判定
+# AI判定（OpenAI）
 # =========================
 def ai_judge(text):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "この文章がAI生成か人間かを判定し、理由も短く答えてください"},
+            {
+                "role": "system",
+                "content": "この文章がAIか人間か判定し理由も短く"
+            },
             {"role": "user", "content": text}
         ]
     )
@@ -61,7 +64,7 @@ def ai_judge(text):
     return response.choices[0].message.content
 
 # =========================
-# HTML表示
+# HTML
 # =========================
 @app.get("/", response_class=HTMLResponse)
 def home():
@@ -79,15 +82,13 @@ def terms():
         return f.read()
 
 # =========================
-# 判定API
+# メインAPI（統合版）
 # =========================
-
 @app.post("/analyze")
 async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 
-    # 📸 画像がある場合
+    # 📸 画像判定
     if file:
-
         score = fake_image_score(file.filename)
 
         return {
@@ -100,7 +101,7 @@ async def analyze(text: str = Form(""), file: UploadFile = File(None)):
     if not text:
         return {"result": "入力してください"}
 
-    # 🧠 テキスト解析
+    # 🧠 テキスト判定
     score, reasons = analyze_text(text)
 
     if score >= 3:
@@ -112,68 +113,13 @@ async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 
     return {
         "type": "text",
+        "score": score,
         "result": result,
         "reasons": reasons
     }
 
-
-# ローカル起動用
+# =========================
+# 起動
+# =========================
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=10000)
-
-def fake_ai_score(text: str):
-
-    score = 50
-
-    if len(text) < 20:
-        score += 20
-
-    return score
-
-
-    score = 50
-
-    if len(text) < 20:
-        score += 20
-
-    if len(text) > 300:
-        score += 10
-
-    if "AI" in text or "Certainly" in text:
-        score += 15
-
-    # 0〜100にする
-    if score > 100:
-        score = 100
-    if score < 0:
-        score = 0
-
-    return score
-
-@app.post("/predict")
-def predict(data: TextIn):
-
-    score = fake_ai_score(data.text)
-
-    if score >= 60:
-        result = "AIの可能性が高い"
-    else:
-        result = "人間の可能性が高い"
-
-    return {
-        "score": score,
-        "result": result
-    }
-    
-
-    score = fake_ai_score(data.text)
-
-    if score >= 60:
-        result = "AIの可能性が高い"
-    else:
-        result = "人間の可能性が高い"
-
-    return {
-        "score": score,
-        "result": result
-    }
