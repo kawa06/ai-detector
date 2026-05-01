@@ -111,45 +111,5 @@ async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=10000)
 
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
 
-app = FastAPI()
-
-# HTMLフォルダ
-templates = Jinja2Templates(directory="templates")
-
-# CSSとか
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-
-# 🏠 トップページ
-@app.get("/", response_class=HTMLResponse)
-def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
-
-# 📄 About
-@app.get("/about", response_class=HTMLResponse)
-def about(request: Request):
-    return templates.TemplateResponse("about.html", {"request": request})
-
-
-# 📩 Contact
-@app.get("/contact", response_class=HTMLResponse)
-def contact(request: Request):
-    return templates.TemplateResponse("contact.html", {"request": request})
-
-
-# 🔒 Privacy
-@app.get("/privacy", response_class=HTMLResponse)
-def privacy(request: Request):
-    return templates.TemplateResponse("privacy-policy.html", {"request": request})
-
-
-# 📜 Terms
-@app.get("/terms", response_class=HTMLResponse)
-def terms(request: Request):
-    return templates.TemplateResponse("terms.html", {"request": request})
+  
