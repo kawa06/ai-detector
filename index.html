@@ -106,3 +106,30 @@ async function analyze() {
 
 </body>
 </html>
+
+<h2>画像AI判定</h2>
+
+<input type="file" id="file">
+<button onclick="uploadImage()">解析</button>
+
+<div id="imgResult"></div>
+
+<script>
+async function uploadImage() {
+    const fileInput = document.getElementById("file");
+    const file = fileInput.files[0];
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("/image-predict", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+
+    document.getElementById("imgResult").innerText =
+        data.result + " / スコア: " + data.score + "%";
+}
+</script>
