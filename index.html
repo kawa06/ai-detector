@@ -1,3 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AI判定</title>
+</head>
+
+<body>
+
+<h1>AI判定ツール</h1>
+
+<textarea id="text"></textarea>
+<br>
+<button onclick="analyze()">判定</button>
+
+<p id="result"></p>
+
 <script>
 async function analyze() {
 
@@ -16,22 +33,7 @@ async function analyze() {
     document.getElementById("result").innerText =
         data.result;
 }
-
-async function uploadImage() {
-
-    const file = document.getElementById("file").files[0];
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch("/analyze", {
-        method: "POST",
-        body: formData
-    });
-
-    const data = await res.json();
-
-    document.getElementById("imgResult").innerText =
-        data.result + " / スコア: " + data.score;
-}
 </script>
+
+</body>
+</html>
