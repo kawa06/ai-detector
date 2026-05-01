@@ -1,95 +1,7 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<title>AI判定ツール</title>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
-    text-align: center;
-    padding: 30px;
-}
-
-.container {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 500px;
-    margin: auto;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-textarea {
-    width: 100%;
-    height: 120px;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    font-size: 16px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #0056b3;
-}
-
-#result {
-    margin-top: 20px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.footer {
-    margin-top: 30px;
-    font-size: 14px;
-}
-</style>
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4845412875657957"
-     crossorigin="anonymous"></script>
-    
-</head>
-<body>
-
-<div class="container">
-
-<h1>AI判定ツール</h1>
-
-<p>この文章はAI？それとも人間？</p>
-
-<textarea id="text" placeholder="ここに文章を入力"></textarea>
-
-<br>
-
-<button onclick="analyze()">判定する</button>
-
-<p id="result"></p>
-
-</div>
-
-<div class="footer">
-<a href="/privacy.html">プライバシーポリシー</a> |
-<a href="/terms.html">利用規約</a>
-</div>
-
 <script>
 async function analyze() {
-    const text = document.getElementById("text").value;
-    const result = document.getElementById("result");
 
-    result.innerText = "判定中...";
+    const text = document.getElementById("text").value;
 
     const formData = new FormData();
     formData.append("text", text);
@@ -100,50 +12,19 @@ async function analyze() {
     });
 
     const data = await res.json();
-    result.innerText = data.result;
-}
-</script>
-
-</body>
-</html>
-
-<h2>画像AI判定</h2>
-
-<input type="file" id="file">
-<button onclick="uploadImage()">解析</button>
-
-<div id="imgResult"></div>
-
-<div id="result"></div>
-
-<script>
-async function check() {
-
-    const text = document.getElementById("text").value;
-
-    const res = await fetch("/predict", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({text})
-    });
-
-    const data = await res.json();
 
     document.getElementById("result").innerText =
-        "スコア: " + data.score + "% / " + data.result;
-    document.getElementById("result").innerText =
-  "スコア: " + (data.score ?? 0) + "% / " + (data.result ?? "エラー");
+        data.result;
 }
-</script>
-<script>
+
 async function uploadImage() {
-    const fileInput = document.getElementById("file");
-    const file = fileInput.files[0];
+
+    const file = document.getElementById("file").files[0];
 
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("/image-predict", {
+    const res = await fetch("/analyze", {
         method: "POST",
         body: formData
     });
@@ -151,6 +32,6 @@ async function uploadImage() {
     const data = await res.json();
 
     document.getElementById("imgResult").innerText =
-        data.result + " / スコア: " + data.score + "%";
+        data.result + " / スコア: " + data.score;
 }
 </script>
