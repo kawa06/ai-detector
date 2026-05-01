@@ -39,3 +39,18 @@ async def image_predict(file: UploadFile = File(...)):
         "score": score,
         "result": result
     }
+
+def fake_image_score(filename: str):
+
+    score = 50
+
+    if filename.endswith(".png"):
+        score += 10
+
+    if filename.endswith(".jpg"):
+        score += 5
+
+    if score > 100:
+        score = 100
+
+    return score
