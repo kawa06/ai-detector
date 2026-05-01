@@ -1,15 +1,17 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from openai import OpenAI
-from image_api import fake_image_score
 import uvicorn
 import os
 import re
 
+from image_api import fake_image_score
+
 app = FastAPI()
 
-# CORS設定
+# =========================
+# CORS
+# =========================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,13 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# OpenAI（使うなら）
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 # =========================
-# テキスト簡易判定
+# テキスト判定
 # =========================
-def analyze_text(text):
+def analyze_text(text: str):
     score = 0
     reasons = []
 
@@ -47,24 +46,13 @@ def analyze_text(text):
     return score, reasons
 
 # =========================
-# AI判定（OpenAI）
+# 簡易AI判定（ダミー）
 # =========================
-def ai_judge(text):
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {
-                "role": "system",
-                "content": "この文章がAIか人間か判定し理由も短く"
-            },
-            {"role": "user", "content": text}
-        ]
-    )
-
-    return response.choices[0].message.content
+def ai_judge(text: str):
+    return "AIの可能性が高い（AI判定）"
 
 # =========================
-# HTML
+# HTML表示
 # =========================
 @app.get("/", response_class=HTMLResponse)
 def home():
@@ -82,12 +70,12 @@ def terms():
         return f.read()
 
 # =========================
-# メインAPI（統合版）
+# メインAPI（統合）
 # =========================
 @app.post("/analyze")
 async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 
-    # 📸 画像判定
+    # 📸 画像がある場合
     if file:
         score = fake_image_score(file.filename)
 
