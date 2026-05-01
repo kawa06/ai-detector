@@ -112,6 +112,28 @@ async def analyze(text: str = Form(""), file: UploadFile = File(None)):
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=10000)
 
+
+def fake_ai_score(text: str):
+
+    score = 50
+
+    if len(text) < 20:
+        score += 20
+
+    if len(text) > 300:
+        score += 10
+
+    if "AI" in text or "Certainly" in text:
+        score += 15
+
+    # 0〜100にする
+    if score > 100:
+        score = 100
+    if score < 0:
+        score = 0
+
+    return score
+
 @app.post("/predict")
 def predict(data: TextIn):
 
