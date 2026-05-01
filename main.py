@@ -81,37 +81,40 @@ def terms():
 # =========================
 # 判定API
 # =========================
+
 @app.post("/analyze")
 async def analyze(text: str = Form(""), file: UploadFile = File(None)):
-   if file:
-      score = fake_image_score(file.filename)
-      return {
-          "type": "image",
-          "score": score
-      }
+
+    # 📸 画像がある場合
+    if file:
+
+        score = fake_image_score(file.filename)
+
+        return {
+            "type": "image",
+            "score": score,
+            "result": "画像解析結果"
+        }
+
+    # ❌ テキストなし
     if not text:
         return {"result": "入力してください"}
 
+    # 🧠 テキスト解析
     score, reasons = analyze_text(text)
 
-    # 明確な場合（高速）
     if score >= 3:
         result = "AIの可能性が高い"
-
     elif score <= 1:
         result = "人間の可能性が高い"
-
     else:
-        # あいまいな時だけAI
-        ai_result = ai_judge(text)
-        return {"result": ai_result}
+        result = ai_judge(text)
 
-    # 理由追加
-    if reasons:
-        result += "\n理由：" + "、".join(reasons)
-
-    return {"result": result}
-
+    return {
+        "type": "text",
+        "result": result,
+        "reasons": reasons
+    }
 
 
 # ローカル起動用
